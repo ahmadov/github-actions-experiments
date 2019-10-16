@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - build_v8
+      - test_wo_deps
 
 jobs:
   build_v8_linux_x64:
@@ -79,7 +79,6 @@ jobs:
         cd v8
 
         git checkout 7.4.288
-        ./build/install-build-deps-android.sh
         ./tools/dev/v8gen.py arm64.release -vv
         
         rm out.gn/arm64.release/args.gn
@@ -126,7 +125,6 @@ jobs:
         cd v8
 
         git checkout 7.4.288
-        ./build/install-build-deps-android.sh
         ./tools/dev/v8gen.py arm.release -vv
         
         rm out.gn/arm.release/args.gn
@@ -173,7 +171,6 @@ jobs:
         cd v8
 
         git checkout 7.4.288
-        ./build/install-build-deps-android.sh
         ./tools/dev/v8gen.py x64.release -vv
         
         rm out.gn/x64.release/args.gn
@@ -220,7 +217,6 @@ jobs:
         cd v8
 
         git checkout 7.4.288
-        ./build/install-build-deps-android.sh
         ./tools/dev/v8gen.py ia32.release -vv
         
         rm out.gn/ia32.release/args.gn
