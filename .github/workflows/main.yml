@@ -1,9 +1,6 @@
-name: CI
+name: Build V8
 
-on:
-  push:
-    branches:
-      - build_v8
+on: [push]
 
 jobs:
   build_v8_linux_x64:
