@@ -1,9 +1,6 @@
-name: CI
+name: Experiments
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
 
 jobs:
   build_job_1:
@@ -109,6 +106,14 @@ jobs:
         echo $job_1_value >> job_files/merged_jobs
         echo $job_2_value >> job_files/merged_jobs
         echo $job_3_value >> job_files/merged_jobs
+
+    - name: on pull request
+      if: github.event_name == 'pull_request'
+      run: echo 'executed on pull request'
+
+    - name: on master
+      if: github.ref == 'refs/heads/master'
+      run: echo 'executed only on master branch'
 
     - name: Archive Merged jobs
       uses: actions/upload-artifact@v1.0.0
