@@ -1,4 +1,4 @@
-name: CI
+name: Build V8 7.4.288
 
 on:
   push:
@@ -27,12 +27,14 @@ jobs:
         echo $PATH
 
         fetch v8
+        cd v8
+        git checkout 7.4.288
+        cd ../
+
         echo "target_os= ['linux']">>.gclient
         gclient sync
 
         cd v8
-
-        git checkout 7.4.288
         ./tools/dev/v8gen.py x64.release -vv
         
         rm out.gn/x64.release/args.gn
@@ -73,12 +75,14 @@ jobs:
         echo $PATH
 
         fetch v8
+        cd v8
+        git checkout 7.4.288
+        cd ../
+
         echo "target_os= ['android']">>.gclient
         gclient sync
 
         cd v8
-
-        git checkout 7.4.288
         ./tools/dev/v8gen.py arm64.release -vv
         
         rm out.gn/arm64.release/args.gn
@@ -119,12 +123,14 @@ jobs:
         echo $PATH
 
         fetch v8
+        cd v8
+        git checkout 7.4.288
+        cd ../
+
         echo "target_os= ['android']">>.gclient
         gclient sync
 
         cd v8
-
-        git checkout 7.4.288
         ./tools/dev/v8gen.py arm.release -vv
         
         rm out.gn/arm.release/args.gn
@@ -165,12 +171,14 @@ jobs:
         echo $PATH
 
         fetch v8
+        cd v8
+        git checkout 7.4.288
+        cd ../
+
         echo "target_os= ['android']">>.gclient
         gclient sync
 
         cd v8
-
-        git checkout 7.4.288
         ./tools/dev/v8gen.py x64.release -vv
         
         rm out.gn/x64.release/args.gn
@@ -211,12 +219,14 @@ jobs:
         echo $PATH
 
         fetch v8
+        cd v8
+        git checkout 7.4.288
+        cd ../
+
         echo "target_os= ['android']">>.gclient
         gclient sync
 
         cd v8
-
-        git checkout 7.4.288
         ./tools/dev/v8gen.py ia32.release -vv
         
         rm out.gn/ia32.release/args.gn
