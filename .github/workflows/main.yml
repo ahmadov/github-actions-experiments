@@ -1,9 +1,6 @@
 name: Build V8 7.4.288
 
-on:
-  push:
-    branches:
-      - test_wo_deps
+on: [push]
 
 jobs:
   build_v8_linux_x64:
@@ -54,9 +51,9 @@ jobs:
         name: v8-linux-64-monolith
         path: v8build/v8/out.gn/x64.release/obj/libv8_monolith.a
 
-  build_v8_android_arm64:
-    name: V8 build for Android arm64
-    runs-on: ubuntu-16.04
+  build_v8_macos:
+    name: V8 build for MacOS
+    runs-on: macos-latest
     
     steps:
     - uses: actions/checkout@v1
@@ -64,9 +61,8 @@ jobs:
       run: |
         python --version
         git --version
-        docker --version
     
-    - name: Build V8 for Android arm64
+    - name: Build V8 for MacOS
       run: |
         mkdir -p v8build
         cd v8build
@@ -79,110 +75,14 @@ jobs:
         git checkout 7.4.288
         cd ../
 
-        echo "target_os= ['android']">>.gclient
-        gclient sync
-
-        cd v8
-        ./tools/dev/v8gen.py arm64.release -vv
-        
-        rm out.gn/arm64.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/android-arm64/args.gn out.gn/arm64.release/args.gn
-        ls -al out.gn/arm64.release/
-        cat out.gn/arm64.release/args.gn
-        sleep 1m
-        touch out.gn/arm64.release/args.gn
-        ls -al out.gn/arm64.release/
-
-        ninja -C out.gn/arm64.release -t clean
-        ninja -C out.gn/arm64.release v8_monolith
-    
-    - name: Archive V8 monolith
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: v8-android-arm64-monolith
-        path: v8build/v8/out.gn/arm64.release/obj/libv8_monolith.a
-
-  build_v8_android_arm:
-    name: V8 build for Android arm
-    runs-on: ubuntu-16.04
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: check build dependencies
-      run: |
-        python --version
-        git --version
-        docker --version
-    
-    - name: Build V8 for Android arm
-      run: |
-        mkdir -p v8build
-        cd v8build
-        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH=$GITHUB_WORKSPACE/v8build/depot_tools:"$PATH" 
-        echo $PATH
-
-        fetch v8
-        cd v8
-        git checkout 7.4.288
-        cd ../
-
-        echo "target_os= ['android']">>.gclient
-        gclient sync
-
-        cd v8
-        ./tools/dev/v8gen.py arm.release -vv
-        
-        rm out.gn/arm.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/android-arm/args.gn out.gn/arm.release/args.gn
-        ls -al out.gn/arm.release/
-        cat out.gn/arm.release/args.gn
-        sleep 1m
-        touch out.gn/arm.release/args.gn
-        ls -al out.gn/arm.release/
-
-        ninja -C out.gn/arm.release -t clean
-        ninja -C out.gn/arm.release v8_monolith
-    
-    - name: Archive V8 monolith
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: v8-android-arm-monolith
-        path: v8build/v8/out.gn/arm.release/obj/libv8_monolith.a
-
-  build_v8_android_x86_64:
-    name: V8 build for Android x86_64
-    runs-on: ubuntu-16.04
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: check build dependencies
-      run: |
-        python --version
-        git --version
-        docker --version
-    
-    - name: Build V8 for Android x86_64
-      run: |
-        mkdir -p v8build
-        cd v8build
-        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH=$GITHUB_WORKSPACE/v8build/depot_tools:"$PATH" 
-        echo $PATH
-
-        fetch v8
-        cd v8
-        git checkout 7.4.288
-        cd ../
-
-        echo "target_os= ['android']">>.gclient
+        echo "target_os= ['mac']">>.gclient
         gclient sync
 
         cd v8
         ./tools/dev/v8gen.py x64.release -vv
         
         rm out.gn/x64.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/android-x64/args.gn out.gn/x64.release/args.gn
+        cp $GITHUB_WORKSPACE/v8/macos-x64/args.gn out.gn/x64.release/args.gn
         ls -al out.gn/x64.release/
         cat out.gn/x64.release/args.gn
         sleep 1m
@@ -195,53 +95,5 @@ jobs:
     - name: Archive V8 monolith
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: v8-android-x86_64-monolith
+        name: v8-macos-64-monolith
         path: v8build/v8/out.gn/x64.release/obj/libv8_monolith.a
-
-  build_v8_android_x86:
-    name: V8 build for Android x86
-    runs-on: ubuntu-16.04
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: check build dependencies
-      run: |
-        python --version
-        git --version
-        docker --version
-    
-    - name: Build V8 for Android x86
-      run: |
-        mkdir -p v8build
-        cd v8build
-        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH=$GITHUB_WORKSPACE/v8build/depot_tools:"$PATH" 
-        echo $PATH
-
-        fetch v8
-        cd v8
-        git checkout 7.4.288
-        cd ../
-
-        echo "target_os= ['android']">>.gclient
-        gclient sync
-
-        cd v8
-        ./tools/dev/v8gen.py ia32.release -vv
-        
-        rm out.gn/ia32.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/android-ia32/args.gn out.gn/ia32.release/args.gn
-        ls -al out.gn/ia32.release/
-        cat out.gn/ia32.release/args.gn
-        sleep 1m
-        touch out.gn/ia32.release/args.gn
-        ls -al out.gn/ia32.release/
-
-        ninja -C out.gn/ia32.release -t clean
-        ninja -C out.gn/ia32.release v8_monolith
-    
-    - name: Archive V8 monolith
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: v8-android-x86-monolith
-        path: v8build/v8/out.gn/ia32.release/obj/libv8_monolith.a
