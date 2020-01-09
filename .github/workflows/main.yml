@@ -3,97 +3,42 @@ name: Build V8 7.4.288
 on: [push]
 
 jobs:
-  build_v8_linux_x64:
-    name: V8 build for Linux x64
-    runs-on: ubuntu-latest
+  build_v8_win:
+    name: V8 build for Windows
+    runs-on: windows-latest
     
     steps:
     - uses: actions/checkout@v1
+    - name: Set up Python 2.x
+      uses: actions/setup-python@v1
+      with:
+        python-version: '2.x'
     - name: check build dependencies
       run: |
         python --version
         git --version
-        docker --version
-    
-    - name: Build V8 for Linux x64
+
+    - name: Build V8 for Windows
       run: |
         mkdir -p v8build
         cd v8build
+        $(get-location)
         git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH=$GITHUB_WORKSPACE/v8build/depot_tools:"$PATH" 
-        echo $PATH
+        $env:Path += ";$(get-location)\depot_tools"
+        $env
+        $env:Path
 
-        fetch v8
+        $env:SKIP_V8_GYP_ENV=1
+        $env:DEPOT_TOOLS_WIN_TOOLCHAIN=0
+        $env:GYP_MSVS_VERSION=2019
+        gclient.bat
+
+        fetch.bat v8
         cd v8
         git checkout 7.4.288
-        cd ../
-
-        echo "target_os= ['linux']">>.gclient
-        gclient sync
-
-        cd v8
-        ./tools/dev/v8gen.py x64.release -vv
-        
-        rm out.gn/x64.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/linux-x64/args.gn out.gn/x64.release/args.gn
-        ls -al out.gn/x64.release/
-        cat out.gn/x64.release/args.gn
-        sleep 1m
-        touch out.gn/x64.release/args.gn
-        ls -al out.gn/x64.release/
-
-        ninja -C out.gn/x64.release -t clean
-        ninja -C out.gn/x64.release v8_monolith
     
     - name: Archive V8 monolith
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: v8-linux-64-monolith
-        path: v8build/v8/out.gn/x64.release/obj/libv8_monolith.a
-
-  build_v8_macos:
-    name: V8 build for MacOS
-    runs-on: macos-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: check build dependencies
-      run: |
-        python --version
-        git --version
-    
-    - name: Build V8 for MacOS
-      run: |
-        mkdir -p v8build
-        cd v8build
-        git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-        export PATH=$GITHUB_WORKSPACE/v8build/depot_tools:"$PATH" 
-        echo $PATH
-
-        fetch v8
-        cd v8
-        git checkout 7.4.288
-        cd ../
-
-        echo "target_os= ['mac']">>.gclient
-        gclient sync
-
-        cd v8
-        ./tools/dev/v8gen.py x64.release -vv
-        
-        rm out.gn/x64.release/args.gn
-        cp $GITHUB_WORKSPACE/v8/macos-x64/args.gn out.gn/x64.release/args.gn
-        ls -al out.gn/x64.release/
-        cat out.gn/x64.release/args.gn
-        sleep 1m
-        touch out.gn/x64.release/args.gn
-        ls -al out.gn/x64.release/
-
-        ninja -C out.gn/x64.release -t clean
-        ninja -C out.gn/x64.release v8_monolith
-    
-    - name: Archive V8 monolith
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: v8-macos-64-monolith
+        name: v8-win-64-monolith
         path: v8build/v8/out.gn/x64.release/obj/libv8_monolith.a
